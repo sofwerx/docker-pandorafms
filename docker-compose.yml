@@ -1,0 +1,68 @@
+# This is a docker-compose.yml equivalent of the following pandorafms.org/getpandora "easy install"
+## curl https://pandorafms.org/getpandora  | sh
+# docker run --name pandora-mysql -e MYSQL_ROOT_PASSWORD=AVeryStrongRootPassword -e MYSQL_DATABASE=pandora -e MYSQL_USER=pandora -e MYSQL_PASSWORD=pandora -d pandorafms/pandorafms-mysql:6
+# echo "Waiting for the DB to initialize"
+# sleep 120
+# docker run -p 41121:41121 --link pandora-mysql:mysql -d pandorafms/pandorafms-server:6
+# docker run -p 80:80 -p 8022:8022 -p 8023:8023 --link pandora-mysql:mysql -d pandorafms/pandorafms-console:6
+
+version: '3.3'
+
+volumes:
+
+  mysql-data:
+    driver: local
+  pandorafms-data:
+    driver: local
+
+networks:
+
+  pandora:
+    driver: bridge
+
+services:
+
+  pandora-mysql:
+    image: pandorafms/pandorafms-mysql:6
+    container_name: pandora-mysql
+    hostname: pandora-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: AVeryStrongRootPassword
+      MYSQL_DATABASE: pandora    
+      MYSQL_USER: pandora
+      MYSQL_PASSWORD: pandora
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - pandora
+
+  pandora-server:
+    image: pandorafms/pandorafms-server:6
+    container_name: pandora-server
+    hostname: pandora-server
+    environment:
+      PANDORA_DB_HOST: pandora-mysql
+      PANDORA_DB_NAME: pandora
+      PANDORA_DB_USER: pandora
+      PANDORA_DB_PASSWORD: pandora
+    ports:
+      - 41121:41121
+    networks:
+      - pandora
+
+  pandora-console:
+    image: pandorafms/pandorafms-console:6
+    container_name: pandora-console
+    hostname: pandora-console
+    ports:
+    - 80:80
+    - 8022:8022
+    - 8023:8023
+    environment:
+      PANDORA_DB_HOST: pandora-mysql
+      PANDORA_DB_NAME: pandora
+      PANDORA_DB_USER: pandora
+      PANDORA_DB_PASSWORD: pandora
+    networks:
+      - pandora
+    
