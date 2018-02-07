@@ -47,6 +47,7 @@ services:
       PANDORA_DB_PASSWORD: pandora
     ports:
       - 41121:41121
+    depends_on: pandora-mysql
     networks:
       - pandora
 
@@ -63,6 +64,7 @@ services:
       PANDORA_DB_NAME: pandora
       PANDORA_DB_USER: pandora
       PANDORA_DB_PASSWORD: pandora
+    depends_on: pandora-mysql
     networks:
       - pandora
     
