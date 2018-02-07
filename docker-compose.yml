@@ -6,7 +6,7 @@
 # docker run -p 41121:41121 --link pandora-mysql:mysql -d pandorafms/pandorafms-server:6
 # docker run -p 80:80 -p 8022:8022 -p 8023:8023 --link pandora-mysql:mysql -d pandorafms/pandorafms-console:6
 
-version: '2'
+version: '2.1'
 
 volumes:
 
@@ -27,29 +27,34 @@ services:
     container_name: pandora-mysql
     hostname: pandora-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: AVeryStrongRootPassword
-      MYSQL_DATABASE: pandora    
-      MYSQL_USER: pandora
-      MYSQL_PASSWORD: pandora
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${PANDORA_DB_NAME}
+      MYSQL_USER: ${PANDORA_DB_USER}
+      MYSQL_PASSWORD: ${PANDORA_DB_PASSWORD}
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
       - pandora
     restart: always
+    healthcheck:
+      test: mysqladmin -h localhost -u $${MYSQL_USER} -p$${MYSQL_PASSWORD} ping
+      timeout: 20s
+      retries: 10
 
   pandora-server:
     image: pandorafms/pandorafms-server:6
     container_name: pandora-server
     hostname: pandora-server
     environment:
-      PANDORA_DB_HOST: pandora-mysql
-      PANDORA_DB_NAME: pandora
-      PANDORA_DB_USER: pandora
-      PANDORA_DB_PASSWORD: pandora
+      PANDORA_DB_HOST: ${PANDORA_DB_HOST}
+      PANDORA_DB_NAME: ${PANDORA_DB_NAME}
+      PANDORA_DB_USER: ${PANDORA_DB_USER}
+      PANDORA_DB_PASSWORD: ${PANDORA_DB_PASSWORD}
     ports:
       - 41121:41121
     depends_on:
-      - pandora-mysql
+      pandora-mysql:
+        condition: service_healthy
     networks:
       - pandora
     restart: always
@@ -63,12 +68,13 @@ services:
     - 8022:8022
     - 8023:8023
     environment:
-      PANDORA_DB_HOST: pandora-mysql
-      PANDORA_DB_NAME: pandora
-      PANDORA_DB_USER: pandora
-      PANDORA_DB_PASSWORD: pandora
+      PANDORA_DB_HOST: ${PANDORA_DB_HOST}
+      PANDORA_DB_NAME: ${PANDORA_DB_NAME}
+      PANDORA_DB_USER: ${PANDORA_DB_USER}
+      PANDORA_DB_PASSWORD: ${PANDORA_DB_PASSWORD}
     depends_on:
-      - pandora-mysql
+      pandora-mysql:
+        condition: service_healthy
     networks:
       - pandora
     restart: always
