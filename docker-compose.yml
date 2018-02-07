@@ -35,6 +35,7 @@ services:
       - mysql-data:/var/lib/mysql
     networks:
       - pandora
+    restart: always
 
   pandora-server:
     image: pandorafms/pandorafms-server:6
@@ -47,9 +48,11 @@ services:
       PANDORA_DB_PASSWORD: pandora
     ports:
       - 41121:41121
-    depends_on: pandora-mysql
+    depends_on:
+      - pandora-mysql
     networks:
       - pandora
+    restart: always
 
   pandora-console:
     image: pandorafms/pandorafms-console:6
@@ -64,7 +67,8 @@ services:
       PANDORA_DB_NAME: pandora
       PANDORA_DB_USER: pandora
       PANDORA_DB_PASSWORD: pandora
-    depends_on: pandora-mysql
+    depends_on:
+      - pandora-mysql
     networks:
       - pandora
-    
+    restart: always
