@@ -42,7 +42,8 @@ services:
       retries: 10
 
   pandora-server:
-    image: pandorafms/pandorafms-server:6
+    build: pandorafms-server/
+    image: sofwerx/pandorafms-server:6
     container_name: pandora-server
     hostname: pandora-server
     environment:
@@ -60,7 +61,8 @@ services:
     restart: always
 
   pandora-console:
-    image: pandorafms/pandorafms-console:6
+    build: pandorafms-console/
+    image: sofwerx/pandorafms-console:6
     container_name: pandora-console
     hostname: pandora-console
     ports:
