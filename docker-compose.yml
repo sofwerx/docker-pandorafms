@@ -64,7 +64,7 @@ services:
     container_name: pandora-console
     hostname: pandora-console
     ports:
-    - 80:80
+#    - 80:80
     - 8022:8022
     - 8023:8023
     environment:
