@@ -37,22 +37,25 @@ fi
 
 mv -f /tmp/pandorafms/pandora_console /var/www/html
 cd /var/www/html/pandora_console/include
-cat > config.php <<- 'EOF'
-<?php
-$config["dbtype"] = "mysql";
-$config["homedir"]="/var/www/html/pandora_console";             // Config homedir
-$config["homeurl"]="/pandora_console";                  // Base URL
-$config["homeurl_static"]="/pandora_console";                   // Don't  delete
-error_reporting(E_ALL);
-$ownDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
-EOF
 
-echo "\$config[\"dbname\"]=\"$PANDORA_DB_NAME\";" >> config.php
-echo "\$config[\"dbuser\"]=\"$PANDORA_DB_USER\";" >> config.php
-echo "\$config[\"dbpass\"]=\"$PANDORA_DB_PASSWORD\";" >> config.php
-echo "\$config[\"dbhost\"]=\"$PANDORA_DB_HOST\";" >> config.php
-echo "include (\$ownDir . \"config_process.php\");" >> config.php
-echo "?>" >> config.php
+HOMEURL="${HOMEURL:-/pandora_console}"
+HOMEURL_STATIC="${HOMEURL_STATIC:-${HOMEURL}}"
+
+cat > config.php <<- EOF
+<?php
+\$config["dbtype"] = "mysql";
+\$config["homedir"]="/var/www/html/pandora_console";             // Config homedir
+\$config["homeurl"]="${HOMEURL}";                  // Base URL
+\$config["homeurl_static"]="${HOMEURL_STATIC}";                   // Don't  delete
+error_reporting(E_ALL);
+\$ownDir = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+\$config["dbname"]="${PANDORA_DB_NAME}";
+\$config["dbuser"]="${PANDORA_DB_USER}";
+\$config["dbpass"]="${PANDORA_DB_PASSWORD}";
+\$config["dbhost"]="${PANDORA_DB_HOST}";
+include (\$ownDir . "config_process.php");
+?>
+EOF
 
 echo "Granting apache permissions to the console directory"
 chown -R apache:apache /var/www/html/pandora_console
