@@ -53,6 +53,8 @@ error_reporting(E_ALL);
 \$config["dbuser"]="${PANDORA_DB_USER}";
 \$config["dbpass"]="${PANDORA_DB_PASSWORD}";
 \$config["dbhost"]="${PANDORA_DB_HOST}";
+\$config["public_url"]="${PUBLIC_URL}";
+\$config["https"]=${HTTPS:-false};
 include (\$ownDir . "config_process.php");
 ?>
 EOF
@@ -71,6 +73,14 @@ sed "s/.*memory_limit =.*/memory_limit = 500M/" /etc/php.ini > /tmp/php.ini && m
 sed "s/.*post_max_size =.*/post_max_size = 100M/" /etc/php.ini > /tmp/php.ini && mv /tmp/php.ini /etc/php.ini
 
 cd /var/www/html/pandora_console && mv -f install.php install.php.done
+
+cat <<EOF > /var/www/html/index.html
+<html>
+<head>
+<meta HTTP-EQUIV="REFRESH" content="0; url=pandora_console/index.php">
+</head>
+</html>
+EOF
 
 #Create the pandora user
 /usr/sbin/useradd -d /home/pandora -s /bin/false -M -g 0 pandora
