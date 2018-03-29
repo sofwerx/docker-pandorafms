@@ -65,18 +65,45 @@ services:
     image: sofwerx/pandorafms-console:6
     container_name: pandora-console
     hostname: pandora-console
-    ports:
-#    - 80:80
-    - 8022:8022
-    - 8023:8023
     environment:
       PANDORA_DB_HOST: ${PANDORA_DB_HOST}
       PANDORA_DB_NAME: ${PANDORA_DB_NAME}
       PANDORA_DB_USER: ${PANDORA_DB_USER}
       PANDORA_DB_PASSWORD: ${PANDORA_DB_PASSWORD}
+#   ports:
+#    - 80:80
     depends_on:
       pandora-mysql:
         condition: service_healthy
     networks:
       - pandora
     restart: always
+
+  pandora-anyterm-ssh:
+    build: pandorafms-anyterm/
+    image: sofwerx/pandorafms-anyterm
+    container_name: pandora-anyterm-ssh
+    hostname: pandora-anyterm-ssh
+    ports:
+      - 127.0.0.1:8022:8022
+    environment:
+      PORT: 8022
+    networks:
+      - pandora
+    restart: always
+    command: anytermd -f -p 8022 -u pandora -c ssh
+
+  pandora-anyterm-telnet:
+    build: pandorafms-anyterm/
+    image: sofwerx/pandorafms-anyterm
+    container_name: pandora-anyterm-telnet
+    hostname: pandora-anyterm-telnet
+    ports:
+      - 127.0.0.1:8023:8023
+    environment:
+      PORT: 8023
+    networks:
+      - pandora
+    restart: always
+    command: anytermd -f -p 8023 -u pandora -c telnet
+

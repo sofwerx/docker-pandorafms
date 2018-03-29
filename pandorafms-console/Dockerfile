@@ -48,7 +48,7 @@ RUN yum install -y \
         jq
 
 #Clone the repo
-RUN git clone -b pandora_6.0 https://github.com/sofwerx/pandorafms.git /tmp/pandorafms
+RUN git clone -b pandora_6.0sp7 --depth 1 https://github.com/sofwerx/pandorafms.git /tmp/pandorafms
 
 #Exposing ports for: HTTP, SNMP Traps, Tentacle protocol
 EXPOSE 80 162/udp 41121
